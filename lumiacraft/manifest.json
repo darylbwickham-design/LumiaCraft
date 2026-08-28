@@ -1,0 +1,535 @@
+{
+  "id": "lumiacraft",
+  "name": "LumiaCraft",
+  "version": "0.3.0",
+  "author": "Hungry_Williams64",
+  "website": "https://www.curseforge.com/members/hungry_williams64/projects",
+  "icon": "./icon.png",
+  "changelog": "./CHANGELOG.md",
+  "license": "MIT",
+  "description": "Multi-loader Minecraft interactions, gameplay alerts, and optional Twitch/YouTube chat relay.",
+  "lumiaVersion": "^9.0.0",
+  "category": "utilities",
+  "config": {
+    "settings": [
+      {
+        "key": "host",
+        "label": "Minecraft host",
+        "type": "text",
+        "defaultValue": "127.0.0.1",
+        "helperText": "Leave this as 127.0.0.1 when Minecraft and Lumia run on the same computer.",
+        "section": "Connection",
+        "sectionOrder": 1,
+        "group": { "key": "server", "label": "Minecraft Bridge" }
+      },
+      {
+        "key": "port",
+        "label": "Bridge port",
+        "type": "number",
+        "defaultValue": 38931,
+        "validation": { "min": 1024, "max": 65535 },
+        "section": "Connection",
+        "sectionOrder": 1,
+        "group": "server"
+      },
+      {
+        "key": "token",
+        "label": "Server token",
+        "type": "password",
+        "defaultValue": "",
+        "helperText": "Not needed for the default local setup. Remote servers generate this in config/lumia-bridge.json.",
+        "section": "Connection",
+        "sectionOrder": 1,
+        "group": "server"
+      },
+      {
+        "key": "backgroundReconnect",
+        "label": "Keep looking for Minecraft in the background",
+        "type": "toggle",
+        "defaultValue": true,
+        "helperText": "Recommended. After the initial connection attempts, LumiaCraft checks again every 30 seconds so it can connect when a world opens later.",
+        "section": "Connection",
+        "sectionOrder": 1,
+        "group": "server"
+      },
+      {
+        "key": "relayStreamChat",
+        "label": "Show stream chat in Minecraft",
+        "type": "toggle",
+        "defaultValue": false,
+        "helperText": "Relays Lumia's unified Twitch, YouTube, and other connected chat to Minecraft as displayname: message.",
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": { "key": "chat_relay", "label": "In-Game Chat Relay" }
+      },
+      {
+        "key": "lumiaApiToken",
+        "label": "Lumia Developers API token",
+        "type": "password",
+        "defaultValue": "",
+        "helperText": "Copy this from Lumia Stream > Settings > API. It stays inside the local LumiaCraft plugin.",
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": { "key": "chat_api", "label": "Lumia Chat Feed" },
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "lumiaApiHost",
+        "label": "Lumia API host",
+        "type": "text",
+        "defaultValue": "127.0.0.1",
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": "chat_api",
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "lumiaApiPort",
+        "label": "Lumia API port",
+        "type": "number",
+        "defaultValue": 39231,
+        "validation": { "min": 1, "max": 65535 },
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": "chat_api",
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "streamChatTarget",
+        "label": "Minecraft chat recipients",
+        "type": "text",
+        "defaultValue": "@a",
+        "helperText": "Use @a for everyone, @p for the nearest player, or an exact Minecraft username.",
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": "chat_relay",
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "streamChatMaxLength",
+        "label": "Maximum relayed message length",
+        "type": "number",
+        "defaultValue": 200,
+        "validation": { "min": 20, "max": 500 },
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": "chat_relay",
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "streamChatMessagesPerMinute",
+        "label": "Maximum chat messages per minute",
+        "type": "number",
+        "defaultValue": 120,
+        "validation": { "min": 1, "max": 600 },
+        "helperText": "Extra messages are silently dropped to protect busy servers.",
+        "section": "Stream Chat",
+        "sectionOrder": 2,
+        "group": "chat_relay",
+        "visibleIf": { "key": "relayStreamChat", "equals": true }
+      },
+      {
+        "key": "defaultTarget",
+        "label": "Default player",
+        "type": "text",
+        "defaultValue": "@p",
+        "helperText": "Use your Minecraft name, @p, @a, or @r.",
+        "section": "Gameplay",
+        "sectionOrder": 2,
+        "group": { "key": "defaults", "label": "Defaults" }
+      },
+      {
+        "key": "maxActionsPerMinute",
+        "label": "Action safety limit per minute",
+        "type": "number",
+        "defaultValue": 30,
+        "validation": { "min": 1, "max": 300 },
+        "section": "Gameplay",
+        "sectionOrder": 2,
+        "group": { "key": "safety", "label": "Safety" }
+      },
+      {
+        "key": "allowRawCommands",
+        "label": "Allow custom command actions",
+        "type": "toggle",
+        "defaultValue": false,
+        "helperText": "Off by default. The Minecraft bridge also enforces its own command allow-list.",
+        "section": "Gameplay",
+        "sectionOrder": 2,
+        "group": "safety"
+      },
+      {
+        "key": "dryRun",
+        "label": "Dry run (log actions without changing the game)",
+        "type": "toggle",
+        "defaultValue": false,
+        "section": "Diagnostics",
+        "sectionOrder": 3,
+        "group": { "key": "diagnostics", "label": "Diagnostics" }
+      },
+      {
+        "key": "watchedPlayer",
+        "label": "Player whose events become alerts",
+        "type": "text",
+        "defaultValue": "",
+        "helperText": "Leave blank for every player, or enter your exact Minecraft username.",
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": { "key": "event_filter", "label": "Event Filter" }
+      },
+      {
+        "key": "healthEvents",
+        "label": "Damage, healing, death and respawn alerts",
+        "type": "toggle",
+        "defaultValue": true,
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": { "key": "event_types", "label": "Event Types" }
+      },
+      {
+        "key": "healthDecimalPlaces",
+        "label": "Health decimal places",
+        "type": "number",
+        "defaultValue": 1,
+        "validation": { "min": 0, "max": 2 },
+        "helperText": "Defaults to one decimal place. Use 0 for whole numbers or 2 for extra detail.",
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": "event_filter"
+      },
+      {
+        "key": "effectEvents",
+        "label": "Potion effect applied, removed and expired alerts",
+        "type": "toggle",
+        "defaultValue": true,
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": "event_types"
+      },
+      {
+        "key": "lifecycleEvents",
+        "label": "Join, leave and dimension alerts",
+        "type": "toggle",
+        "defaultValue": true,
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": "event_types"
+      },
+      {
+        "key": "progressionEvents",
+        "label": "Advancement alerts",
+        "type": "toggle",
+        "defaultValue": true,
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": "event_types"
+      },
+      {
+        "key": "itemEvents",
+        "label": "Crafted and smelted item alerts",
+        "type": "toggle",
+        "defaultValue": false,
+        "helperText": "Off by default because large crafting sessions can be noisy.",
+        "section": "Minecraft Events",
+        "sectionOrder": 3,
+        "group": "event_types"
+      }
+    ],
+    "alerts": [
+      {
+        "title": "Minecraft: Player Damaged",
+        "key": "player_damage",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "health", "previousHealth", "maxHealth", "healthPercent", "absorption", "previousAbsorption", "effectiveHealth", "amount", "originalAmount", "blockedAmount", "source", "attacker", "attackerType", "dimension", "x", "y", "z"],
+        "defaultMessage": "{{player}} took {{amount}} damage and has {{health}}/{{maxHealth}} health."
+      },
+      {
+        "title": "Minecraft: Player Healed",
+        "key": "player_heal",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "health", "previousHealth", "maxHealth", "healthPercent", "absorption", "previousAbsorption", "effectiveHealth", "amount", "dimension", "x", "y", "z"],
+        "defaultMessage": "{{player}} healed {{amount}} and now has {{health}}/{{maxHealth}} health."
+      },
+      {
+        "title": "Minecraft: Player Died",
+        "key": "player_death",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "source", "attacker", "attackerType", "dimension", "x", "y", "z"],
+        "defaultMessage": "{{player}} died to {{source}}."
+      },
+      {
+        "title": "Minecraft: Player Respawned",
+        "key": "player_respawn",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "health", "maxHealth", "dimension", "endConquered", "x", "y", "z"],
+        "defaultMessage": "{{player}} respawned with {{health}} health."
+      },
+      {
+        "title": "Minecraft: Potion Effect Applied",
+        "key": "effect_applied",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "effect", "effectName", "amplifier", "level", "durationTicks", "durationSeconds", "ambient", "visible", "sourceEntity", "sourceEntityType", "health", "maxHealth"],
+        "defaultMessage": "{{player}} received {{effectName}} {{level}} for {{durationSeconds}} seconds.",
+        "variationConditions": [
+          {
+            "type": "EQUAL_SELECTION",
+            "description": "Potion effect registry ID is exactly (for example minecraft:regeneration or a modded effect ID).",
+            "dynamicOptions": true,
+            "selections": []
+          }
+        ]
+      },
+      {
+        "title": "Minecraft: Potion Effect Removed",
+        "key": "effect_removed",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "effect", "effectName", "amplifier", "level", "durationTicks", "durationSeconds", "health", "maxHealth"],
+        "defaultMessage": "{{effectName}} was removed from {{player}}.",
+        "variationConditions": [
+          {
+            "type": "EQUAL_SELECTION",
+            "description": "Potion effect registry ID is exactly (for example minecraft:regeneration or a modded effect ID).",
+            "dynamicOptions": true,
+            "selections": []
+          }
+        ]
+      },
+      {
+        "title": "Minecraft: Potion Effect Expired",
+        "key": "effect_expired",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "effect", "effectName", "amplifier", "level", "durationTicks", "durationSeconds", "health", "maxHealth"],
+        "defaultMessage": "{{player}}'s {{effectName}} expired.",
+        "variationConditions": [
+          {
+            "type": "EQUAL_SELECTION",
+            "description": "Potion effect registry ID is exactly (for example minecraft:regeneration or a modded effect ID).",
+            "dynamicOptions": true,
+            "selections": []
+          }
+        ]
+      },
+      {
+        "title": "Minecraft: Player Joined",
+        "key": "player_join",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "health", "maxHealth", "dimension", "x", "y", "z"],
+        "defaultMessage": "{{player}} joined Minecraft."
+      },
+      {
+        "title": "Minecraft: Player Left",
+        "key": "player_leave",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "health", "maxHealth", "dimension", "x", "y", "z"],
+        "defaultMessage": "{{player}} left Minecraft."
+      },
+      {
+        "title": "Minecraft: Dimension Changed",
+        "key": "dimension_change",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "fromDimension", "toDimension", "health", "maxHealth", "x", "y", "z"],
+        "defaultMessage": "{{player}} travelled to {{toDimension}}."
+      },
+      {
+        "title": "Minecraft: Advancement Earned",
+        "key": "advancement",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "advancement", "health", "maxHealth", "dimension"],
+        "defaultMessage": "{{player}} earned {{advancement}}."
+      },
+      {
+        "title": "Minecraft: Item Crafted",
+        "key": "item_crafted",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "item", "itemName", "count", "health", "maxHealth", "dimension"],
+        "defaultMessage": "{{player}} crafted {{count}}× {{itemName}}."
+      },
+      {
+        "title": "Minecraft: Item Smelted",
+        "key": "item_smelted",
+        "acceptedVariables": ["value", "name", "username", "displayname", "userId", "player", "item", "itemName", "count", "health", "maxHealth", "dimension"],
+        "defaultMessage": "{{player}} smelted {{count}}× {{itemName}}."
+      }
+    ],
+    "actions": [
+      {
+        "type": "summon_mob",
+        "label": "Spawn Mob Near Player",
+        "description": "Spawn one or more mobs at a player. Modded entity IDs are supported.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "entity", "label": "Mob", "type": "select", "defaultValue": "minecraft:zombie", "allowTyping": true, "allowVariables": true, "options": [
+            { "label": "Zombie", "value": "minecraft:zombie" },
+            { "label": "Creeper", "value": "minecraft:creeper" },
+            { "label": "Skeleton", "value": "minecraft:skeleton" },
+            { "label": "Warden", "value": "minecraft:warden" },
+            { "label": "Chicken", "value": "minecraft:chicken" },
+            { "label": "Lightning", "value": "minecraft:lightning_bolt" }
+          ] },
+          { "key": "count", "label": "Count", "type": "number", "defaultValue": 1, "min": 1, "max": 50 },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 2, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "give_item",
+        "label": "Give Item",
+        "description": "Give a vanilla or modded item to the target player.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "item", "label": "Item ID", "type": "select", "defaultValue": "minecraft:diamond", "allowTyping": true, "allowVariables": true, "options": [
+            { "label": "Diamond", "value": "minecraft:diamond" },
+            { "label": "Golden Apple", "value": "minecraft:golden_apple" },
+            { "label": "Totem of Undying", "value": "minecraft:totem_of_undying" },
+            { "label": "Dirt", "value": "minecraft:dirt" }
+          ] },
+          { "key": "count", "label": "Count", "type": "number", "defaultValue": 1, "min": 1, "max": 6400 },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 0, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "apply_effect",
+        "label": "Apply Status Effect",
+        "description": "Apply a good or bad effect with bounded duration and strength.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "effect", "label": "Effect", "type": "select", "defaultValue": "minecraft:slowness", "allowTyping": true, "allowVariables": true, "options": [
+            { "label": "Speed", "value": "minecraft:speed" },
+            { "label": "Slowness", "value": "minecraft:slowness" },
+            { "label": "Blindness", "value": "minecraft:blindness" },
+            { "label": "Darkness", "value": "minecraft:darkness" },
+            { "label": "Levitation", "value": "minecraft:levitation" },
+            { "label": "Regeneration", "value": "minecraft:regeneration" },
+            { "label": "Mining Fatigue", "value": "minecraft:mining_fatigue" }
+          ] },
+          { "key": "seconds", "label": "Duration seconds", "type": "number", "defaultValue": 10, "min": 1, "max": 3600 },
+          { "key": "amplifier", "label": "Amplifier (0 = level I)", "type": "number", "defaultValue": 0, "min": 0, "max": 9 },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 2, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "damage_player",
+        "label": "Damage Player",
+        "description": "Deal a bounded amount of damage without constructing an unsafe command.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "amount", "label": "Damage (half-hearts)", "type": "number", "defaultValue": 4, "min": 1, "max": 1000 },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 5, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "world_control",
+        "label": "Change Time or Weather",
+        "description": "Switch the world to a common time or weather state.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "state", "label": "World state", "type": "select", "defaultValue": "weather_thunder", "options": [
+            { "label": "Thunderstorm", "value": "weather_thunder" },
+            { "label": "Rain", "value": "weather_rain" },
+            { "label": "Clear weather", "value": "weather_clear" },
+            { "label": "Day", "value": "time_day" },
+            { "label": "Night", "value": "time_night" },
+            { "label": "Midnight", "value": "time_midnight" }
+          ] },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 5, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "show_message",
+        "label": "Show In-Game Message",
+        "description": "Show a safe title, subtitle, actionbar, or chat message using Lumia variables.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "placement", "label": "Placement", "type": "select", "defaultValue": "title", "options": [
+            { "label": "Title", "value": "title" },
+            { "label": "Subtitle", "value": "subtitle" },
+            { "label": "Action bar", "value": "actionbar" },
+            { "label": "Chat", "value": "chat" }
+          ] },
+          { "key": "message", "label": "Message", "type": "text", "defaultValue": "{{username}} changed the game!", "allowVariables": true },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true }
+        ]
+      },
+      {
+        "type": "run_preset",
+        "label": "Run Chaos Preset",
+        "description": "Ready-made interactions with sensible limits and cooldowns.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "preset", "label": "Preset", "type": "select", "defaultValue": "lightning", "options": [
+            { "label": "Lightning strike", "value": "lightning" },
+            { "label": "Creeper surprise", "value": "creeper" },
+            { "label": "Chicken rain", "value": "chicken_rain" },
+            { "label": "Launch player", "value": "launch" },
+            { "label": "Darkness", "value": "darkness" },
+            { "label": "Emergency heal", "value": "heal" },
+            { "label": "Diamond drop", "value": "diamonds" },
+            { "label": "Clear inventory", "value": "clear_inventory" }
+          ] },
+          { "key": "target", "label": "Player (blank = default)", "type": "text", "defaultValue": "", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 5, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "random_command",
+        "label": "Pick a Random Command",
+        "description": "Randomly choose one command from a line-separated list. Requires custom commands to be enabled.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "commands", "label": "Commands (one per line)", "type": "textarea", "defaultValue": "weather thunder\ntime set night\neffect give @p minecraft:slowness 10 1 true", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 5, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "command_sequence",
+        "label": "Run Command Sequence",
+        "description": "Run several commands in order with an optional delay. Requires custom commands to be enabled.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "commands", "label": "Commands (one per line)", "type": "textarea", "defaultValue": "title @a title {\"text\":\"Incoming!\",\"color\":\"gold\"}\nweather thunder", "allowVariables": true },
+          { "key": "delayMs", "label": "Delay between commands (ms)", "type": "number", "defaultValue": 250, "min": 0, "max": 10000 },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 5, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "run_command",
+        "label": "Run Minecraft Command",
+        "description": "Advanced action for an allow-listed server command. Requires custom commands to be enabled.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_commands_run"],
+        "fields": [
+          { "key": "command", "label": "Command (without slash)", "type": "text", "defaultValue": "say Hello from Lumia", "allowVariables": true },
+          { "key": "cooldown", "label": "Cooldown seconds", "type": "number", "defaultValue": 0, "min": 0, "max": 3600 }
+        ]
+      },
+      {
+        "type": "bridge_status",
+        "label": "Read Minecraft Event Status",
+        "description": "Read the bridge version and event counters to diagnose Minecraft-to-Lumia alerts.",
+        "acceptedVariables": ["lumiacraft_result", "lumiacraft_events_published", "lumiacraft_events_received"],
+        "fields": []
+      },
+      {
+        "type": "reconnect",
+        "label": "Reconnect to Minecraft",
+        "description": "Reconnect after starting Minecraft or changing the bridge settings.",
+        "acceptedVariables": ["lumiacraft_result"],
+        "fields": []
+      }
+    ],
+    "variables": [
+      { "name": "connected", "description": "Whether LumiaCraft is connected to Minecraft.", "value": false },
+      { "name": "minecraft_version", "description": "Connected Minecraft version.", "value": "" },
+      { "name": "players_online", "description": "Online player count from the latest heartbeat.", "value": 0 },
+      { "name": "last_result", "description": "Last action result or error.", "value": "" },
+      { "name": "last_event", "description": "Latest Minecraft event type.", "value": "" },
+      { "name": "last_event_player", "description": "Player from the latest Minecraft event.", "value": "" },
+      { "name": "player_health", "description": "Latest reported player health.", "value": 0 },
+      { "name": "player_max_health", "description": "Latest reported player maximum health.", "value": 0 },
+      { "name": "player_health_percent", "description": "Latest player health as a percentage from 0 to 100.", "value": 0 },
+      { "name": "last_effect", "description": "Latest applied, removed, or expired effect ID.", "value": "" }
+      ,{ "name": "bridge_version", "description": "Connected Minecraft bridge version.", "value": "" }
+      ,{ "name": "bridge_events_published", "description": "Number of gameplay events published by the Minecraft bridge.", "value": 0 }
+      ,{ "name": "bridge_events_received", "description": "Number of gameplay events received by LumiaCraft.", "value": 0 }
+      ,{ "name": "bridge_events_supported", "description": "Whether the installed Minecraft bridge supports Minecraft-to-Lumia events.", "value": false }
+      ,{ "name": "stream_chat_connected", "description": "Whether LumiaCraft is connected to Lumia's unified chat feed.", "value": false }
+      ,{ "name": "stream_chat_messages_relayed", "description": "Number of stream chat messages relayed into Minecraft.", "value": 0 }
+      ,{ "name": "stream_chat_last_sender", "description": "Display name from the latest relayed stream chat message.", "value": "" }
+      ,{ "name": "stream_chat_last_message", "description": "Latest stream chat message relayed into Minecraft.", "value": "" }
+      ,{ "name": "stream_chat_last_platform", "description": "Platform/origin of the latest relayed stream chat message.", "value": "" }
+    ],
+    "translations": {},
+    "settings_tutorial": "./settings_tutorial.md",
+    "actions_tutorial": "./actions_tutorial.md"
+  }
+}

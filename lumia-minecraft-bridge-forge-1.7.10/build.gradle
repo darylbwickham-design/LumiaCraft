@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+version = '0.3.0'
+group = 'me.lumiabridge'
+archivesBaseName = 'lumiabridge-forge-1.7.10'
+
+sourceCompatibility = targetCompatibility = '1.8'
+
+minecraft {
+    version = '1.7.10-10.13.4.1614-1.7.10'
+    runDir = 'run'
+}
+
+sourceSets {
+    main {
+        java { srcDir '../lumia-minecraft-bridge-legacy-common/src/main/java' }
+    }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', '1.7.10'
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': '1.7.10'
+    }
+    from(sourceSets.main.resources.srcDirs) { exclude 'mcmod.info' }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// ForgeGradle 1.2 hard-codes Mojang's retired HTTP S3 endpoint. The verified
+// 1.7.10 client/server artifacts are supplied in its normal cache paths.
+downloadClient.enabled = false
+downloadServer.enabled = false

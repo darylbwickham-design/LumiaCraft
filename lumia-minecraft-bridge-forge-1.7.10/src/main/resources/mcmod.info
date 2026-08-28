@@ -1,0 +1,15 @@
+[
+  {
+    "modid": "lumiabridge",
+    "name": "Lumia Bridge",
+    "description": "Connects Lumia Stream to Minecraft 1.7.10 Forge servers and single-player worlds.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/members/hungry_williams64/projects",
+    "authorList": ["Hungry_Williams64"],
+    "credits": "Built for the LumiaCraft plugin",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

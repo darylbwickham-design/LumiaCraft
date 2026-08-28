@@ -1,0 +1,27 @@
+# Gradle and generated Minecraft files
+.gradle/
+.gradle-legacy/
+.toolchains/
+**/.gradle/
+**/build/
+**/run/
+
+# Node dependencies and logs
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Packaged release files
+*.lumiaplugin
+*.jar
+*.zip
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+desktop.ini

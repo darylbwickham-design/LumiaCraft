@@ -1,0 +1,42 @@
+plugins {
+    id 'fabric-loom' version '1.7.4'
+    id 'maven-publish'
+}
+
+version = mod_version
+group = 'me.lumiabridge'
+
+base {
+    archivesName = "${mod_id}-fabric-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
+
+sourceSets.main.java.srcDir '../lumia-minecraft-bridge-common/src/main/java'
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def values = [
+        minecraft_version: minecraft_version,
+        fabric_loader_version: fabric_loader_version,
+        mod_version: mod_version,
+        mod_id: mod_id,
+        java_version: java_version,
+        pack_format: pack_format
+    ]
+    inputs.properties values
+    filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
+        expand values
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = java_version as int
+}

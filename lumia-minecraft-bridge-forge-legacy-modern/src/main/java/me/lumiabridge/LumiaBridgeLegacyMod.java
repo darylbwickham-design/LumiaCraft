@@ -68,6 +68,12 @@ public final class LumiaBridgeLegacyMod {
 
     @Mod.EventHandler
     public void onServerStopping(FMLServerStoppingEvent event) {
+        for (Map.Entry<String, PlayerSnapshot> entry : snapshots.entrySet()) {
+            JsonObject data = identityData(entry.getValue().username, entry.getKey());
+            data.addProperty("dimension", String.valueOf(entry.getValue().dimension));
+            data.addProperty("reason", "server_stopping");
+            publish("player_leave", data);
+        }
         if (runtime != null) runtime.close();
         runtime = null;
         server = null;

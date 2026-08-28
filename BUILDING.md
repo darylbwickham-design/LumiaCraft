@@ -16,7 +16,7 @@ Package the plugin with Lumia Stream's plugin-development tooling. Do not commit
 
 ## Modern Minecraft bridges
 
-Use Java 21 for Minecraft 1.21.1 and Java 17 for 1.20.1/1.18.2. The NeoForge project includes the repository's modern Gradle wrapper.
+Use Java 21 for Minecraft 1.21.1, Java 17 for 1.20.1/1.18.2/1.19.2, and Java 25 for NeoForge 26.1.2. The NeoForge projects include their modern Gradle wrappers.
 
 ```powershell
 # NeoForge 1.21.1
@@ -36,6 +36,10 @@ Use Java 21 for Minecraft 1.21.1 and Java 17 for 1.20.1/1.18.2. The NeoForge pro
 # Forge
 ./lumia-minecraft-bridge/gradlew.bat -p lumia-minecraft-bridge-forge-1.20.1 build
 ./lumia-minecraft-bridge/gradlew.bat -p lumia-minecraft-bridge-forge-1.18.2 build
+./lumia-minecraft-bridge/gradlew.bat -p lumia-minecraft-bridge-forge-1.19.2 build
+
+# NeoForge 26.1.2 (Java 25)
+./lumia-minecraft-bridge-neoforge-26.1.2/gradlew.bat build
 ```
 
 The bridge projects deliberately remain adjacent because their Gradle source sets reference the shared common directories by relative path.
@@ -46,6 +50,8 @@ Use a 64-bit Java 8 JDK. Old ForgeGradle releases are not compatible with curren
 
 | Minecraft | ForgeGradle | Recommended Gradle |
 | --- | --- | --- |
+| 1.15.2 | 3.x | 5.6.4 |
+| 1.16.5 | 4.1 | 6.8.3 |
 | 1.12.2 | 2.3 | 4.10.3 |
 | 1.10.2 | 2.2 | 3.5.1 or 4.10.3 |
 | 1.7.10 | 1.2 | 2.14.1 |

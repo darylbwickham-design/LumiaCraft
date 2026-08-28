@@ -26,6 +26,7 @@ Minecraft project downloads and updates are also available from [Hungry_Williams
 | Minecraft | Loader | Java | Typical packs/use |
 | --- | --- | --- | --- |
 | 1.21.1 | NeoForge | 21 | Modern NeoForge packs |
+| 26.1.2 | NeoForge | 25 | **Beta:** NeoForge 26 / current ATM and Opolis packs |
 | 1.21.1 | Fabric + Fabric API | 21 | Modern Fabric packs |
 | 1.20.1 | Forge | 17 | Create and TARDIS-era packs |
 | 1.20.1 | Fabric + Fabric API | 17 | Fabric 1.20.1 packs |
@@ -70,6 +71,7 @@ See [the Lumia plugin guide](lumiacraft/README.md), [settings guide](lumiacraft/
 - `lumiacraft` — Lumia Stream plugin, documentation, and smoke test.
 - `lumia-minecraft-bridge-common` — shared modern bridge protocol/runtime.
 - `lumia-minecraft-bridge` — NeoForge 1.21.1 adapter.
+- `lumia-minecraft-bridge-neoforge-26.1.2` — Java 25 NeoForge 26.1.2 beta adapter.
 - `lumia-minecraft-bridge-fabric` — parameterised Fabric 1.20.1/1.21.1 adapter.
 - `lumia-minecraft-bridge-fabric-1.19.2` — separately pinned Fabric 1.19.2 beta adapter.
 - `lumia-minecraft-bridge-forge-1.20.1` and `-1.18.2` — modern Forge adapters.

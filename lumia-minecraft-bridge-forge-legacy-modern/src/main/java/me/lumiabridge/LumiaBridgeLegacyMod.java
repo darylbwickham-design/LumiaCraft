@@ -10,7 +10,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 )
 public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.0";
+    public static final String VERSION = "0.3.1";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     private static final float EPSILON = 0.001F;
     private static final DamageSource LUMIA_DAMAGE = new DamageSource("lumiacraft");
@@ -53,7 +53,7 @@ public final class LumiaBridgeLegacyMod {
     private LegacyBridgeRuntime runtime;
 
     public LumiaBridgeLegacyMod() {
-        MinecraftForge.EVENT_BUS.register(this);
+        FMLCommonHandler.instance().bus().register(this);
     }
 
     @Mod.EventHandler

@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = "${mod_id}-forge-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+    copyIdeResources = true
+}
+
+sourceSets.main.java.srcDir '../lumia-minecraft-bridge-common/src/main/java'
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def values = [
+        minecraft_version: minecraft_version,
+        forge_version: forge_version,
+        mod_version: mod_version,
+        mod_id: mod_id,
+        mod_name: mod_name
+    ]
+    inputs.properties values
+    filesMatching('META-INF/mods.toml') {
+        expand values
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

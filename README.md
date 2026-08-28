@@ -12,6 +12,8 @@ One Lumia plugin works with every supported bridge. No Twitch credentials are st
 
 Download the ready-to-use files from the [latest GitHub release](https://github.com/darylbwickham-design/LumiaCraft/releases/latest).
 
+For the in-progress modpack expansion, use the clearly labelled [0.3.1 Modpack Beta files](releases/LumiaBridge-0.3.1-Modpack-Beta). These are separate from the stable release and should be tested in a copied instance first.
+
 1. Import `lumiacraft-0.3.0.lumiaplugin` into Lumia Stream and enable it.
 2. Put exactly one bridge JAR in the Minecraft instance's `mods` folder—the file matching both the Minecraft version and mod loader.
 3. For Fabric, also install Fabric API.
@@ -28,6 +30,8 @@ Minecraft project downloads and updates are also available from [Hungry_Williams
 | 1.20.1 | Forge | 17 | Create and TARDIS-era packs |
 | 1.20.1 | Fabric + Fabric API | 17 | Fabric 1.20.1 packs |
 | 1.18.2 | Forge | 17 | FTB Inferno-era packs |
+| 1.19.2 | Forge | 17 | **Beta:** large 1.19.2 Forge packs |
+| 1.19.2 | Fabric + Fabric API | 17 | **Beta:** Fabric 1.19.2 packs |
 | 1.12.2 | Forge | 8 | ATM3 and SkyFactory-era packs |
 | 1.10.2 | Forge | 8 | SkyFactory 3-era packs |
 | 1.7.10 | Forge | 8 | FTB Presents SkyFactory 2.5 |
@@ -66,7 +70,10 @@ See [the Lumia plugin guide](lumiacraft/README.md), [settings guide](lumiacraft/
 - `lumia-minecraft-bridge-common` — shared modern bridge protocol/runtime.
 - `lumia-minecraft-bridge` — NeoForge 1.21.1 adapter.
 - `lumia-minecraft-bridge-fabric` — parameterised Fabric 1.20.1/1.21.1 adapter.
+- `lumia-minecraft-bridge-fabric-1.19.2` — separately pinned Fabric 1.19.2 beta adapter.
 - `lumia-minecraft-bridge-forge-1.20.1` and `-1.18.2` — modern Forge adapters.
+- `lumia-minecraft-bridge-forge-1.19.2` — pinned Forge 1.19.2 beta adapter.
+- `releases/LumiaBridge-0.3.1-Modpack-Beta` — locally packaged, compiled beta JARs and setup guide.
 - `lumia-minecraft-bridge-legacy-common` — Java 8-compatible legacy protocol/runtime.
 - `lumia-minecraft-bridge-forge-legacy-modern` — shared Forge 1.10.2/1.12.2 adapter.
 - `lumia-minecraft-bridge-forge-1.7.10`, `-1.10.2`, and `-1.12.2` — legacy Forge builds.

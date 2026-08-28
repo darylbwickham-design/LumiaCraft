@@ -32,6 +32,7 @@ Minecraft project downloads and updates are also available from [Hungry_Williams
 | 1.20.1 | Fabric + Fabric API | 17 | Fabric 1.20.1 packs |
 | 1.18.2 | Forge | 17 | FTB Inferno-era packs |
 | 1.16.5 | Forge | 8 | **Beta:** FTB/ATM-era Forge packs |
+| 1.15.2 | Forge | 8 | **Beta:** late 1.15 Forge packs |
 | 1.19.2 | Forge | 17 | **Beta:** large 1.19.2 Forge packs |
 | 1.19.2 | Fabric + Fabric API | 17 | **Beta:** Fabric 1.19.2 packs |
 | 1.12.2 | Forge | 8 | ATM3 and SkyFactory-era packs |
@@ -76,6 +77,7 @@ See [the Lumia plugin guide](lumiacraft/README.md), [settings guide](lumiacraft/
 - `lumia-minecraft-bridge-fabric-1.19.2` — separately pinned Fabric 1.19.2 beta adapter.
 - `lumia-minecraft-bridge-forge-1.20.1` and `-1.18.2` — modern Forge adapters.
 - `lumia-minecraft-bridge-forge-1.16.5` — Java 8 Forge 1.16.5 beta adapter.
+- `lumia-minecraft-bridge-forge-1.15.2` — Java 8 Forge 1.15.2 beta adapter.
 - `lumia-minecraft-bridge-forge-1.19.2` — pinned Forge 1.19.2 beta adapter.
 - `releases/LumiaBridge-0.3.1-Modpack-Beta` — locally packaged, compiled beta JARs and setup guide.
 - `lumia-minecraft-bridge-legacy-common` — Java 8-compatible legacy protocol/runtime.

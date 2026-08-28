@@ -6,6 +6,7 @@ These are optional beta bridges for the popular 1.19.2 modpack generation. They 
 
 1. Close Minecraft.
 2. Pick the JAR that matches the pack loader:
+   - Forge 1.15.2 pack: `lumiabridge-forge-1.15.2-0.3.1-beta.1.jar` (Java 8)
    - Forge 1.16.5 pack: `lumiabridge-forge-1.16.5-0.3.1-beta.1.jar` (Java 8)
    - Forge pack: `lumiabridge-forge-1.19.2-0.3.1-beta.1.jar`
    - Fabric pack: `lumiabridge-fabric-1.19.2-0.3.1-beta.1.jar`
@@ -20,8 +21,8 @@ Damage, healing, death, respawn, potion effects, join/leave, dimension changes, 
 
 ## Beta status
 
-All four JARs passed a clean production build against their target loader. They still need real-world testing in individual packs, especially heavily modified servers. Keep the stable bridge installed if your pack is already covered by a stable release. Please report the exact modpack name, Minecraft version, loader version, and latest log when a beta fails.
+All five JARs passed a clean production build against their target loader. They still need real-world testing in individual packs, especially heavily modified servers. Keep the stable bridge installed if your pack is already covered by a stable release. Please report the exact modpack name, Minecraft version, loader version, and latest log when a beta fails.
 
 ## Coming next
 
-Forge 1.15.2 is being adapted separately because its loader API is not binary compatible with these builds. It will be added here only after it compiles and is clearly marked beta.
+The first beta matrix is complete. Future additions will be added only after they compile and are clearly marked beta.

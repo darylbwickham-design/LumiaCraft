@@ -36,8 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
         modid = LumiaBridgeLegacyMod.MOD_ID,
         name = "Lumia Bridge",
         version = LumiaBridgeLegacyMod.VERSION,
-        acceptableRemoteVersions = "*",
-        serverSideOnly = true
+        acceptableRemoteVersions = "*"
 )
 public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";

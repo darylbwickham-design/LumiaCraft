@@ -1,13 +1,13 @@
 {
   "name": "lumia-lumiacraft",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Multi-loader Minecraft stream interactions powered by Lumia Stream.",
   "main": "main.js",
   "scripts": {
     "check": "node --check main.js && node tests/smoke.js",
     "validate": "npx --yes lumia-plugin validate .",
-    "build": "npx --yes lumia-plugin build . --out ../lumiacraft-releases/lumiacraft-0.3.0.lumiaplugin"
+    "build": "npx --yes lumia-plugin build . --out ../lumiacraft-releases/lumiacraft-0.3.1.lumiaplugin"
   },
   "dependencies": {
     "@lumiastream/plugin": "^0.8.0",

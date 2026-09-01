@@ -106,6 +106,7 @@ class LumiaCraftPlugin extends Plugin {
     this.chatRelayQueue = Promise.resolve();
     this.chatMessagesRelayed = 0;
     this.seenChatIds = new Map();
+    this.seenChatFingerprints = new Map();
   }
 
   async onload() {
@@ -442,7 +443,7 @@ class LumiaCraftPlugin extends Plugin {
 
     const chat = this._normalizeLumiaChat(envelope);
     if (!chat.message) return;
-    if (chat.id && this._alreadySawChat(chat.id)) return;
+    if (chat.id ? this._alreadySawChat(chat.id) : this._alreadySawChatFingerprint(chat)) return;
     this.chatRelayQueue = this.chatRelayQueue
       .then(() => this._relayLumiaChat(chat))
       .catch((error) => this._log(`Stream chat relay failed: ${error instanceof Error ? error.message : String(error)}`, 'error'));
@@ -471,6 +472,20 @@ class LumiaCraftPlugin extends Plugin {
     }
     if (this.seenChatIds.has(id)) return true;
     this.seenChatIds.set(id, now);
+    return false;
+  }
+
+  _alreadySawChatFingerprint(chat) {
+    const now = Date.now();
+    // Lumia's unified feed can publish the same Twitch message through several
+    // no-ID event envelopes. Keep this deliberately short so a viewer can
+    // still send the same text again a moment later.
+    for (const [known, seenAt] of this.seenChatFingerprints) {
+      if (now - seenAt > 8000) this.seenChatFingerprints.delete(known);
+    }
+    const fingerprint = `${chat.origin}\u0000${chat.username}\u0000${chat.message}`;
+    if (this.seenChatFingerprints.has(fingerprint)) return true;
+    this.seenChatFingerprints.set(fingerprint, now);
     return false;
   }
 

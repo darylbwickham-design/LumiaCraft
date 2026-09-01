@@ -1,5 +1,9 @@
 # LumiaCraft changelog
 
+## 0.3.1
+
+- Fixed duplicate Twitch chat relays when Lumia sends repeated chat envelopes without a message ID.
+
 ## 0.3.0
 
 - Added optional Twitch, YouTube, and unified Lumia chat relay into Minecraft.

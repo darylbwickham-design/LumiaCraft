@@ -104,14 +104,27 @@ async function main() {
     chatClient.send(fallbackMessage);
     chatClient.send(fallbackMessage);
     chatClient.send(JSON.stringify({
+      type: 'chat', origin: 'twitch', data: { username: 'NoIdUser', message: 'same envelope four times' }
+    }));
+    chatClient.send(JSON.stringify({
+      type: 'chat', origin: 'twitch', data: { username: 'NoIdUser', message: 'same envelope four times' }
+    }));
+    chatClient.send(JSON.stringify({
+      type: 'chat', origin: 'twitch', data: { username: 'NoIdUser', message: 'same envelope four times' }
+    }));
+    chatClient.send(JSON.stringify({
+      type: 'chat', origin: 'twitch', data: { username: 'NoIdUser', message: 'same envelope four times' }
+    }));
+    chatClient.send(JSON.stringify({
       type: 'chat', origin: 'youtube', data: {
         id: 'chat-2', username: 'account_name', displayname: 'Display Name', message: 'second message'
       }
     }));
-    await waitFor(() => received.length === 4);
+    await waitFor(() => received.length === 5);
     assert.equal(received[2], 'tellraw @a {"text":"FallbackUser: hello world"}');
-    assert.equal(received[3], 'tellraw @a {"text":"Display Name: second message"}');
-    assert.equal(variables.get('stream_chat_messages_relayed'), 2);
+    assert.equal(received[3], 'tellraw @a {"text":"NoIdUser: same envelope four times"}');
+    assert.equal(received[4], 'tellraw @a {"text":"Display Name: second message"}');
+    assert.equal(variables.get('stream_chat_messages_relayed'), 3);
     assert.equal(variables.get('stream_chat_last_sender'), 'Display Name');
     assert.equal(variables.get('stream_chat_last_platform'), 'youtube');
     assert.equal(variables.get('minecraft_version'), '1.21.1');

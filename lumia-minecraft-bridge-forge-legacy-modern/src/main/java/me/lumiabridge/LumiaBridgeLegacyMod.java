@@ -3,6 +3,7 @@ package me.lumiabridge;
 import com.google.gson.JsonObject;
 import me.lumiabridge.legacy.LegacyBridgeRuntime;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -96,7 +97,11 @@ public final class LumiaBridgeLegacyMod {
         if (!(event.getEntityPlayer() instanceof EntityPlayerMP)) return;
         EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
         JsonObject data = playerData(player);
-        data.addProperty("advancement", event.getAdvancement().getId().toString());
+        String advancementId = event.getAdvancement().getId().toString();
+        DisplayInfo display = event.getAdvancement().getDisplay();
+        String advancementTitle = display == null ? advancementId : display.getTitle().getUnformattedText();
+        data.addProperty("advancement", advancementTitle);
+        data.addProperty("advancementId", advancementId);
         publish("advancement", data);
     }
 

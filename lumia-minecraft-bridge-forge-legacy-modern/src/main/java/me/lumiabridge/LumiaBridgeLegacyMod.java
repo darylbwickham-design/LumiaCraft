@@ -3,7 +3,6 @@ package me.lumiabridge;
 import com.google.gson.JsonObject;
 import me.lumiabridge.legacy.LegacyBridgeRuntime;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +17,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 )
 public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.1";
+    public static final String VERSION = "0.3.2";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     // LumiaCraft presents health to one decimal place. Snapshot at the same
     // precision so legacy regeneration sub-ticks cannot become "healed 0".
@@ -93,16 +92,29 @@ public final class LumiaBridgeLegacyMod {
     }
 
     @SubscribeEvent
-    public void onAdvancement(AdvancementEvent event) {
-        if (!(event.getEntityPlayer() instanceof EntityPlayerMP)) return;
-        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
-        JsonObject data = playerData(player);
-        String advancementId = event.getAdvancement().getId().toString();
-        DisplayInfo display = event.getAdvancement().getDisplay();
-        String advancementTitle = display == null ? advancementId : display.getTitle().getUnformattedText();
-        data.addProperty("advancement", advancementTitle);
-        data.addProperty("advancementId", advancementId);
-        publish("advancement", data);
+    public void onForgeEvent(Event event) {
+        // Advancements and AdvancementEvent were added in 1.12. Reflection
+        // keeps this shared bridge loadable on the 1.10.2 Forge classpath.
+        if (!"net.minecraftforge.event.entity.player.AdvancementEvent".equals(event.getClass().getName())) return;
+        try {
+            Object playerObject = event.getClass().getMethod("getEntityPlayer").invoke(event);
+            if (!(playerObject instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) playerObject;
+            Object advancement = event.getClass().getMethod("getAdvancement").invoke(event);
+            String advancementId = String.valueOf(advancement.getClass().getMethod("getId").invoke(advancement));
+            Object display = advancement.getClass().getMethod("getDisplay").invoke(advancement);
+            String advancementTitle = advancementId;
+            if (display != null) {
+                Object title = display.getClass().getMethod("getTitle").invoke(display);
+                if (title != null) advancementTitle = String.valueOf(title.getClass().getMethod("getUnformattedText").invoke(title));
+            }
+            JsonObject data = playerData(player);
+            data.addProperty("advancement", advancementTitle);
+            data.addProperty("advancementId", advancementId);
+            publish("advancement", data);
+        } catch (ReflectiveOperationException error) {
+            LOGGER.warn("Could not publish advancement event", error);
+        }
     }
 
     private void drainServerTasks() {

@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +87,15 @@ public final class LumiaBridgeLegacyMod {
         if (event.phase != TickEvent.Phase.END || server == null) return;
         drainServerTasks();
         monitorPlayers();
+    }
+
+    @SubscribeEvent
+    public void onAdvancement(AdvancementEvent event) {
+        if (!(event.getEntityPlayer() instanceof EntityPlayerMP)) return;
+        EntityPlayerMP player = (EntityPlayerMP) event.getEntityPlayer();
+        JsonObject data = playerData(player);
+        data.addProperty("advancement", event.getAdvancement().getId().toString());
+        publish("advancement", data);
     }
 
     private void drainServerTasks() {

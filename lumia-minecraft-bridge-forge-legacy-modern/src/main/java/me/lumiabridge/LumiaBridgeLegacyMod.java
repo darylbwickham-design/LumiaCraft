@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 )
 public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.2";
+    public static final String VERSION = LegacyBridgeVersion.VALUE;
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     // LumiaCraft presents health to one decimal place. Snapshot at the same
     // precision so legacy regeneration sub-ticks cannot become "healed 0".

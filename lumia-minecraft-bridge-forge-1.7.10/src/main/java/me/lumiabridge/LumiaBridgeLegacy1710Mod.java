@@ -14,11 +14,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.stats.Achievement;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.event.entity.player.AchievementEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +39,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Mod(modid = LumiaBridgeLegacy1710Mod.MOD_ID, name = "Lumia Bridge", version = LumiaBridgeLegacy1710Mod.VERSION, acceptableRemoteVersions = "*")
 public final class LumiaBridgeLegacy1710Mod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.2";
+    public static final String VERSION = "0.3.3";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     // LumiaCraft presents health to one decimal place. Snapshot at the same
     // precision so legacy regeneration sub-ticks cannot become "healed 0".
@@ -78,6 +80,17 @@ public final class LumiaBridgeLegacy1710Mod {
         if (event.phase != TickEvent.Phase.END || server == null) return;
         drainServerTasks();
         monitorPlayers();
+    }
+
+    @SubscribeEvent
+    public void onAchievement(AchievementEvent event) {
+        if (!(event.entityPlayer instanceof EntityPlayerMP)) return;
+        EntityPlayerMP player = (EntityPlayerMP) event.entityPlayer;
+        Achievement achievement = event.achievement;
+        JsonObject data = playerData(player);
+        data.addProperty("advancement", achievement.func_150951_e().getUnformattedText());
+        data.addProperty("advancementId", achievement.statId);
+        publish("advancement", data);
     }
 
     private void drainServerTasks() {

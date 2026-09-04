@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 )
 public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.2";
+    public static final String VERSION = "0.3.3";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     // LumiaCraft presents health to one decimal place. Snapshot at the same
     // precision so legacy regeneration sub-ticks cannot become "healed 0".
@@ -95,7 +95,12 @@ public final class LumiaBridgeLegacyMod {
     public void onForgeEvent(Event event) {
         // Advancements and AdvancementEvent were added in 1.12. Reflection
         // keeps this shared bridge loadable on the 1.10.2 Forge classpath.
-        if (!"net.minecraftforge.event.entity.player.AdvancementEvent".equals(event.getClass().getName())) return;
+        String eventName = event.getClass().getName();
+        if ("net.minecraftforge.event.entity.player.AchievementEvent".equals(eventName)) {
+            publishLegacyAchievement(event);
+            return;
+        }
+        if (!"net.minecraftforge.event.entity.player.AdvancementEvent".equals(eventName)) return;
         try {
             Object playerObject = event.getClass().getMethod("getEntityPlayer").invoke(event);
             if (!(playerObject instanceof EntityPlayerMP)) return;
@@ -114,6 +119,40 @@ public final class LumiaBridgeLegacyMod {
             publish("advancement", data);
         } catch (ReflectiveOperationException error) {
             LOGGER.warn("Could not publish advancement event", error);
+        }
+    }
+
+    private void publishLegacyAchievement(Event event) {
+        try {
+            Object playerObject = event.getClass().getMethod("getEntityPlayer").invoke(event);
+            if (!(playerObject instanceof EntityPlayerMP)) return;
+            EntityPlayerMP player = (EntityPlayerMP) playerObject;
+            Object achievement = event.getClass().getMethod("getAchievement").invoke(event);
+            Object title = invokeMethod(achievement, "getStatName", "func_150951_e");
+            String achievementTitle = String.valueOf(invokeMethod(title, "getUnformattedText", "func_150260_c"));
+            String achievementId = String.valueOf(readField(achievement, "statId", "field_75975_e"));
+            JsonObject data = playerData(player);
+            data.addProperty("advancement", achievementTitle);
+            data.addProperty("advancementId", achievementId);
+            publish("advancement", data);
+        } catch (ReflectiveOperationException error) {
+            LOGGER.warn("Could not publish achievement event", error);
+        }
+    }
+
+    private static Object invokeMethod(Object target, String primaryName, String srgName) throws ReflectiveOperationException {
+        try {
+            return target.getClass().getMethod(primaryName).invoke(target);
+        } catch (NoSuchMethodException ignored) {
+            return target.getClass().getMethod(srgName).invoke(target);
+        }
+    }
+
+    private static Object readField(Object target, String primaryName, String srgName) throws ReflectiveOperationException {
+        try {
+            return target.getClass().getField(primaryName).get(target);
+        } catch (NoSuchFieldException ignored) {
+            return target.getClass().getField(srgName).get(target);
         }
     }
 

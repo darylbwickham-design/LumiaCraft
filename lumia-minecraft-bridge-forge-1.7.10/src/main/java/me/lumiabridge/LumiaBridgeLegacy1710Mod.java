@@ -20,6 +20,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AchievementEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Mod(modid = LumiaBridgeLegacy1710Mod.MOD_ID, name = "Lumia Bridge", version = LumiaBridgeLegacy1710Mod.VERSION, acceptableRemoteVersions = "*")
 public final class LumiaBridgeLegacy1710Mod {
     public static final String MOD_ID = "lumiabridge";
-    public static final String VERSION = "0.3.3";
+    public static final String VERSION = "0.3.1";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
     // LumiaCraft presents health to one decimal place. Snapshot at the same
     // precision so legacy regeneration sub-ticks cannot become "healed 0".
@@ -53,6 +54,7 @@ public final class LumiaBridgeLegacy1710Mod {
 
     public LumiaBridgeLegacy1710Mod() {
         FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Mod.EventHandler

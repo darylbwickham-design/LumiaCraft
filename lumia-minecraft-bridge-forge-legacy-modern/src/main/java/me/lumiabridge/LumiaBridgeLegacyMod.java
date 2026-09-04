@@ -43,7 +43,9 @@ public final class LumiaBridgeLegacyMod {
     public static final String MOD_ID = "lumiabridge";
     public static final String VERSION = "0.3.1";
     private static final Logger LOGGER = LogManager.getLogger("LumiaBridge");
-    private static final float EPSILON = 0.001F;
+    // LumiaCraft presents health to one decimal place. Snapshot at the same
+    // precision so legacy regeneration sub-ticks cannot become "healed 0".
+    private static final float EPSILON = 0.05F;
     private static final DamageSource LUMIA_DAMAGE = new DamageSource("lumiacraft");
 
     private final Map<String, PlayerSnapshot> snapshots = new HashMap<String, PlayerSnapshot>();
@@ -123,10 +125,10 @@ public final class LumiaBridgeLegacyMod {
                 continue;
             }
 
-            float healthDelta = current.health - previous.health;
-            float absorptionDelta = current.absorption - previous.absorption;
+            float healthDelta = roundMetric(current.health - previous.health);
+            float absorptionDelta = roundMetric(current.absorption - previous.absorption);
             float absorptionLost = current.hurt ? Math.max(0.0F, -absorptionDelta) : 0.0F;
-            float damage = Math.max(0.0F, -healthDelta) + absorptionLost;
+            float damage = roundMetric(Math.max(0.0F, -healthDelta) + absorptionLost);
             if (damage > EPSILON) {
                 JsonObject data = playerData(player);
                 addHealth(data, current);
@@ -212,7 +214,7 @@ public final class LumiaBridgeLegacyMod {
             effects.put(id, new EffectSnapshot(id, effect.getEffectName(), effect.getAmplifier(), effect.getDuration()));
         }
         return new PlayerSnapshot(
-                player.getName(), player.getHealth(), player.getMaxHealth(), player.getAbsorptionAmount(),
+                player.getName(), roundMetric(player.getHealth()), roundMetric(player.getMaxHealth()), roundMetric(player.getAbsorptionAmount()),
                 player.hurtTime > 0, player.isDead || player.getHealth() <= 0.0F, player.dimension, effects
         );
     }
@@ -239,7 +241,11 @@ public final class LumiaBridgeLegacyMod {
         data.addProperty("health", snapshot.health);
         data.addProperty("maxHealth", snapshot.maxHealth);
         data.addProperty("absorption", snapshot.absorption);
-        data.addProperty("effectiveHealth", snapshot.health + snapshot.absorption);
+        data.addProperty("effectiveHealth", roundMetric(snapshot.health + snapshot.absorption));
+    }
+
+    private static float roundMetric(float value) {
+        return Math.round(value * 10.0F) / 10.0F;
     }
 
     private void publish(String event, JsonObject data) {
